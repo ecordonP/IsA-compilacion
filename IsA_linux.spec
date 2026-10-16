@@ -31,6 +31,9 @@ PYREADSTAT_IMPORTS = [
 # backports.tarfile. Se incluyen en cada programa: si no, rthook_block_foreign_packages los
 # trata como paquetes ajenos de la carpeta compartida y el programa no arranca.
 PKG_RESOURCES_IMPORTS = ['jaraco.text', 'jaraco.context', 'jaraco.functools', 'backports.tarfile']
+# Linux: PIL.ImageTk carga PIL._tkinter_finder de forma dinámica (PyInstaller no lo ve) y sin
+# él falla «invalid command name PyImagingPhoto» en los módulos con imágenes (Likert, Muestra)
+PKG_RESOURCES_IMPORTS += ['PIL._tkinter_finder']
 BOKEH_IMPORTS = [
     'bokeh.resources',
     'bokeh.util',
