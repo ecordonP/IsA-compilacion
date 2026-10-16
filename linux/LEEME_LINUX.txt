@@ -1,0 +1,19 @@
+IsA - Intelligent Statistical Assistant (versión reducida) para Linux
+=====================================================================
+
+Requisitos: Ubuntu 22.04 o posterior (x86_64), con escritorio gráfico.
+
+Instalación
+  1. Descomprima IsA-linux-x86_64.tar.gz en la carpeta donde quiera conservar IsA,
+     por ejemplo en su carpeta personal:   tar xzf IsA-linux-x86_64.tar.gz
+  2. Para añadir IsA al menú de aplicaciones:   IsA/instalar_isa.sh
+     (o abra IsA directamente con:   IsA/Menu)
+
+Licencia
+  La primera vez, IsA pide el archivo de licencia config.MENU que le ha facilitado
+  el proveedor y lo guarda en ~/.config/IsA. Al instalar una versión nueva de IsA
+  en otra carpeta, la licencia se conserva.
+
+Desinstalación
+  IsA/instalar_isa.sh --desinstalar   y borre la carpeta IsA.
+  La licencia está en ~/.config/IsA.

@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Instalar IsA en Mac</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1d1d1f; --muted: #6e6e73; --accent: #0058b0;
+    --card: #f5f5f7; --border: #d2d2d7; --warn-bg: #fff6e5; --warn-border: #f0b429;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1c1e; --fg: #f5f5f7; --muted: #a1a1a6; --accent: #4da3ff;
+      --card: #2c2c2e; --border: #3a3a3c; --warn-bg: #3a2f14; --warn-border: #b7891f;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 28px; margin: 0 0 4px; }
+  .sub { color: var(--muted); margin: 0 0 28px; }
+  h2 { font-size: 20px; margin: 36px 0 12px; }
+  ol.steps { list-style: none; counter-reset: s; padding: 0; margin: 0; }
+  ol.steps > li {
+    counter-increment: s; position: relative; padding: 14px 16px 14px 60px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px;
+  }
+  ol.steps > li::before {
+    content: counter(s); position: absolute; left: 16px; top: 14px;
+    width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff;
+    display: grid; place-items: center; font-weight: 700;
+  }
+  .ui { font-weight: 600; white-space: nowrap; }
+  .note {
+    background: var(--warn-bg); border-left: 4px solid var(--warn-border);
+    padding: 12px 16px; border-radius: 8px; margin: 16px 0;
+  }
+  code, pre {
+    font-family: ui-monospace, Menlo, monospace; font-size: 14px;
+    background: var(--card); border: 1px solid var(--border); border-radius: 6px;
+  }
+  code { padding: 1px 5px; }
+  pre { padding: 12px; overflow-x: auto; white-space: pre-wrap; word-break: break-all; }
+  details { margin-top: 12px; }
+  summary { cursor: pointer; font-weight: 600; }
+  footer { margin-top: 40px; color: var(--muted); font-size: 14px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Instalar IsA en Mac</h1>
+  <p class="sub">IsA – Asistente Estadístico Inteligente · Para Mac con chip Apple (M1, M2, M3, M4, M5) y macOS 12 o posterior</p>
+
+  <h2>1. Copiar la aplicación</h2>
+  <ol class="steps">
+    <li>En esta ventana, arrastra el icono <span class="ui">IsA</span> sobre la carpeta <span class="ui">Applications</span> (Aplicaciones).</li>
+    <li>Cuando termine la copia, cierra esta ventana y expulsa el disco <span class="ui">IsA</span> (botón ⏏ en la barra lateral del Finder).</li>
+  </ol>
+
+  <h2>2. Autorizar la apertura (solo la primera vez)</h2>
+  <p>IsA no se distribuye a través de la App Store, por lo que macOS pide confirmación antes de abrirla por primera vez. Es normal y solo hay que hacerlo una vez en cada Mac.</p>
+  <ol class="steps">
+    <li>Abre la carpeta <span class="ui">Aplicaciones</span> y haz doble clic en <span class="ui">IsA</span>.<br>
+        Aparecerá un aviso indicando que no se puede verificar la aplicación. Pulsa <span class="ui">Aceptar</span> o <span class="ui">Hecho</span> (<strong>no</strong> pulses «Trasladar a la papelera»).</li>
+    <li>Abre el menú  → <span class="ui">Ajustes del Sistema…</span> → <span class="ui">Privacidad y seguridad</span>.</li>
+    <li>Baja hasta la sección <span class="ui">Seguridad</span>. Verás el mensaje <em>«Se ha bloqueado el uso de "IsA"…»</em>. Pulsa <span class="ui">Abrir igualmente</span>.</li>
+    <li>Introduce la contraseña de tu Mac (o usa Touch ID) y, en el aviso que aparece, pulsa <span class="ui">Abrir igualmente</span> de nuevo.</li>
+  </ol>
+  <div class="note">El botón <span class="ui">Abrir igualmente</span> solo aparece durante aproximadamente una hora después del primer intento de abrir IsA. Si no lo ves, vuelve a hacer doble clic en IsA y repite los pasos.</div>
+
+  <h2>3. Activar la licencia (solo la primera vez)</h2>
+  <ol class="steps">
+    <li>Al abrir IsA por primera vez, te pedirá el archivo de licencia. Pulsa <span class="ui">Aceptar</span>.</li>
+    <li>Selecciona el archivo <code>config.MENU</code> que te ha facilitado el proveedor (por ejemplo, desde la carpeta <span class="ui">Descargas</span>) y pulsa <span class="ui">Abrir</span>.</li>
+    <li>Se abrirá el menú principal de IsA. A partir de ahora la aplicación se abre directamente, como cualquier otra.</li>
+  </ol>
+  <p>La licencia queda guardada en tu usuario, así que puedes borrar el archivo <code>config.MENU</code> descargado. Si recibes una licencia nueva (por ejemplo, al renovarla), consulta «Sustituir la licencia» más abajo.</p>
+
+  <h2>Uso</h2>
+  <p>Abre siempre IsA desde su icono: los módulos (Datos, Gráficos, Descriptivas, Regresión…) se lanzan desde los botones del menú principal. Para salir, usa el botón <span class="ui">Cerrar aplicación</span> de la parte inferior del menú.</p>
+
+  <h2>Problemas frecuentes</h2>
+  <details>
+    <summary>macOS dice que «IsA está dañada y no se puede abrir»</summary>
+    <p>No está dañada: es el mismo bloqueo del paso 2 en algunas versiones de macOS. Abre la aplicación <span class="ui">Terminal</span> (en Aplicaciones → Utilidades), pega esta línea, pulsa Intro y vuelve a abrir IsA:</p>
+    <pre>xattr -dr com.apple.quarantine /Applications/IsA.app</pre>
+  </details>
+  <details>
+    <summary>No aparece el botón «Abrir igualmente»</summary>
+    <p>Comprueba que has intentado abrir IsA justo antes (paso 2.1). Si sigue sin aparecer, usa la solución de Terminal del apartado anterior.</p>
+  </details>
+  <details>
+    <summary>Sustituir la licencia (renovación o licencia nueva)</summary>
+    <p>En el Finder, pulsa <span class="ui">Ir</span> → <span class="ui">Ir a la carpeta…</span>, escribe la ruta siguiente y pulsa Intro:</p>
+    <pre>~/Library/Application Support/IsA</pre>
+    <p>Borra el archivo <code>config.MENU</code> de esa carpeta y abre IsA: te pedirá la licencia nueva.</p>
+  </details>
+  <details>
+    <summary>«Licencia caducada» o «Módulo no licenciado»</summary>
+    <p>Tu licencia ha caducado o no incluye ese módulo. Contacta con el proveedor para renovarla o ampliarla.</p>
+  </details>
+
+  <footer>IsA – Intelligent Statistical Assistant · Eulogio Cordón, 2026</footer>
+</main>
+</body>
+</html>

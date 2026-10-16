@@ -1,0 +1,75 @@
+name: Compilar Linux (Ubuntu)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    # Ubuntu 22.04 (glibc 2.35): el resultado funciona en Ubuntu 22.04 o posterior
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-mac.txt
+
+      - name: Paquetes del sistema (Tk y pantalla virtual para la prueba)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends tk8.6 xvfb xauth
+          python -c "import platform, tkinter; print(platform.machine(), 'Tk', tkinter.Tcl().eval('info patchlevel'))"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-mac.txt
+
+      # Sin paso de pyarmor: la licencia no admite CI. Los scripts llegan ya
+      # ofuscados en obf_linux/ (generados en Windows con obfuscate_mac.py).
+      - name: Compilar IsA y .tar.gz
+        run: bash build_linux.sh
+
+      # Prueba de arranque: el menú y cada módulo deben seguir abiertos pasados unos
+      # segundos. La licencia de prueba es un secreto cifrado del repositorio (no va en el .tar.gz).
+      - name: Prueba de arranque (Ubuntu 22.04)
+        env:
+          ISA_CI_LICENSE: ${{ secrets.ISA_CI_LICENSE }}
+        run: |
+          CFG="$HOME/.config/IsA"
+          python ci/licencia_prueba.py "$CFG"
+          Xvfb :99 -screen 0 1920x1080x24 &
+          sleep 2
+          DISPLAY=:99 bash ci/probar_modulos.sh dist/IsA "$CFG/config.MENU"
+          rm -f "$CFG/config.MENU"
+
+      - name: Prueba de arranque en Ubuntu 24.04 limpio
+        env:
+          ISA_CI_LICENSE: ${{ secrets.ISA_CI_LICENSE }}
+        run: |
+          LIC="$RUNNER_TEMP/licencia_docker"
+          python ci/licencia_prueba.py "$LIC"
+          docker run --rm -v "$PWD/dist:/dist:ro" -v "$PWD/ci:/ci:ro" -v "$LIC:/lic:ro" ubuntu:24.04 bash -c '
+            set -e
+            apt-get update >/dev/null
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends xvfb xauth >/dev/null
+            mkdir -p /root/.config/IsA && cp /lic/config.MENU /root/.config/IsA/
+            cd /tmp && tar xzf /dist/IsA-linux-x86_64.tar.gz
+            Xvfb :99 -screen 0 1920x1080x24 & sleep 2
+            DISPLAY=:99 bash /ci/probar_modulos.sh /tmp/IsA /root/.config/IsA/config.MENU'
+          rm -rf "$LIC"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IsA-linux-x86_64
+          path: dist/IsA-linux-x86_64.tar.gz
+          # 7 días: descargue el resultado al terminar (en un repositorio público no ocupa cuota)
+          retention-days: 7
+          compression-level: 0

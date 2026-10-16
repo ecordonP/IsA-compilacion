@@ -1,0 +1,8 @@
+build/
+dist/
+__pycache__/
+*.pyc
+# Nunca: licencias ni claves
+config.MENU
+*.pem
+*.MENU

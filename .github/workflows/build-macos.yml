@@ -1,0 +1,87 @@
+name: Compilar macOS (Apple Silicon)
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    # macos-15 es arm64 (Apple Silicon): el resultado funciona en M1, M2, M3, M4 y M5
+    runs-on: macos-15
+    timeout-minutes: 90
+    env:
+      # Firma y notarización: opcionales. Sin estos secretos se firma ad hoc.
+      MACOS_CERT_P12: ${{ secrets.MACOS_CERT_P12 }}
+      MACOS_CERT_PASSWORD: ${{ secrets.MACOS_CERT_PASSWORD }}
+      MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+      APPLE_ID: ${{ secrets.APPLE_ID }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+      APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-mac.txt
+
+      - name: Comprobar arquitectura y Tk
+        run: |
+          uname -m
+          python -c "import platform, tkinter; print(platform.machine(), 'Tk', tkinter.Tcl().eval('info patchlevel'))"
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-mac.txt
+
+      # Sin paso de pyarmor: la licencia no admite CI. Los scripts llegan ya
+      # ofuscados en obf_mac/ (generados en Windows con obfuscate_mac.py) y
+      # build_mac.sh comprueba que están al día con los fuentes.
+
+      - name: Importar certificado de firma
+        if: env.MACOS_CERT_P12 != ''
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/build.keychain-db"
+          KEYCHAIN_PASSWORD="$(uuidgen)"
+          echo "$MACOS_CERT_P12" | base64 --decode > "$RUNNER_TEMP/cert.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/cert.p12" -P "$MACOS_CERT_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -s -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          echo "ISA_CODESIGN_IDENTITY=$MACOS_SIGN_IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Compilar IsA.app y DMG
+        run: bash build_mac.sh
+
+      # Prueba de arranque: el menú y cada módulo deben seguir abiertos pasados unos
+      # segundos. La licencia de prueba es un secreto cifrado del repositorio (no va en el .dmg).
+      - name: Prueba de arranque de los programas
+        env:
+          ISA_CI_LICENSE: ${{ secrets.ISA_CI_LICENSE }}
+        run: |
+          CFG="$HOME/Library/Application Support/IsA"
+          python ci/licencia_prueba.py "$CFG"
+          bash ci/probar_modulos.sh dist/IsA.app/Contents/MacOS "$CFG/config.MENU"
+          rm -f "$CFG/config.MENU"
+
+      - name: Notarizar DMG
+        if: env.MACOS_CERT_P12 != '' && env.APPLE_ID != ''
+        run: |
+          xcrun notarytool submit dist/IsA-macos-arm64.dmg \
+            --apple-id "$APPLE_ID" --team-id "$APPLE_TEAM_ID" --password "$APPLE_APP_PASSWORD" \
+            --wait
+          xcrun stapler staple dist/IsA-macos-arm64.dmg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: IsA-macos-arm64
+          path: dist/IsA-macos-arm64.dmg
+          # 7 días: descargue el resultado al terminar (en un repositorio público no ocupa cuota)
+          retention-days: 7

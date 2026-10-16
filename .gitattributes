@@ -1,0 +1,7 @@
+# Scripts de shell con LF (se ejecutan en macOS y Linux)
+*.sh text eol=lf
+*.yml text eol=lf
+# Salida de pyarmor: no tocar saltos de línea ni contenido
+obf_mac/** binary
+obf_mac_intel/** binary
+obf_linux/** binary
