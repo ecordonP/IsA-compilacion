@@ -25,6 +25,12 @@ bokeh==2.4.3
 Jinja2==3.1.6
 ipython==9.4.0
 
+# Los necesita pkg_resources al arrancar el programa compilado (jaraco, backports)
+jaraco.text==4.0.0
+jaraco.context==6.0.1
+jaraco.functools==4.1.0
+backports.tarfile==1.2.0
+
 # Compilación (pyarmor no hace falta: obf_mac/ llega ya ofuscado desde Windows)
 pyinstaller==6.15.0
 pyinstaller-hooks-contrib==2026.8

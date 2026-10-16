@@ -27,6 +27,10 @@ PYREADSTAT_IMPORTS = [
     'pyreadstat._readstat_parser',
     'pyreadstat.worker',
 ]
+# El arranque de PyInstaller (pyi_rth_pkgres) carga pkg_resources, que necesita jaraco y
+# backports.tarfile. Se incluyen en cada programa: si no, rthook_block_foreign_packages los
+# trata como paquetes ajenos de la carpeta compartida y el programa no arranca.
+PKG_RESOURCES_IMPORTS = ['jaraco.text', 'jaraco.context', 'jaraco.functools', 'backports.tarfile']
 BOKEH_IMPORTS = [
     'bokeh.resources',
     'bokeh.util',
@@ -142,7 +146,7 @@ for name, script, opts in TARGETS:
         pathex=[ROOT],
         binaries=opts.get('binaries', []),
         datas=opts.get('datas', []),
-        hiddenimports=PYREADSTAT_IMPORTS + opts.get('hiddenimports', []),
+        hiddenimports=PYREADSTAT_IMPORTS + PKG_RESOURCES_IMPORTS + opts.get('hiddenimports', []),
         hookspath=[],
         hooksconfig={},
         runtime_hooks=COMMON_RTHOOKS + opts.get('runtime_hooks', []),
