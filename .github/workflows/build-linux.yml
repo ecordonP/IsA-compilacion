@@ -59,7 +59,9 @@ jobs:
           docker run --rm -v "$PWD/dist:/dist:ro" -v "$PWD/ci:/ci:ro" -v "$LIC:/lic:ro" ubuntu:24.04 bash -c '
             set -e
             apt-get update >/dev/null
-            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends xvfb xauth >/dev/null
+            # fontconfig y una fuente: sin ellas Tk no puede crear ventanas; cualquier
+            # escritorio Ubuntu las trae (la imagen de docker no)
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends xvfb xauth fontconfig fonts-dejavu-core >/dev/null
             mkdir -p /root/.config/IsA && cp /lic/config.MENU /root/.config/IsA/
             cd /tmp && tar xzf /dist/IsA-linux-x86_64.tar.gz
             Xvfb :99 -screen 0 1920x1080x24 & sleep 2
