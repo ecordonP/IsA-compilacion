@@ -10,9 +10,11 @@ Instalación
      (o abra IsA directamente con:   IsA/Menu)
 
 Licencia
-  La primera vez, IsA pide el archivo de licencia config.MENU que le ha facilitado
-  el proveedor y lo guarda en ~/.config/IsA. Al instalar una versión nueva de IsA
-  en otra carpeta, la licencia se conserva.
+  Si la carpeta IsA incluye el archivo de licencia config.MENU, instalar_isa.sh lo
+  copia a ~/.config/IsA (si allí no hay ya una licencia). Si no, la primera vez IsA
+  pide el archivo config.MENU que le ha facilitado el proveedor y lo guarda en
+  ~/.config/IsA. Al instalar una versión nueva de IsA en otra carpeta, la licencia
+  se conserva.
 
 Desinstalación
   IsA/instalar_isa.sh --desinstalar   y borre la carpeta IsA.
